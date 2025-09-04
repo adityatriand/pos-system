@@ -8,10 +8,7 @@
         </p>
       </div>
       <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-        <button
-          @click="openModal()"
-          class="btn-primary"
-        >
+        <button @click="openModal()" class="btn-primary">
           Add Branch
         </button>
       </div>
@@ -54,28 +51,20 @@
                     <div v-if="branch.email">{{ branch.email }}</div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <span
-                      :class="[
-                        'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                        branch.is_active
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      ]"
-                    >
+                    <span :class="[
+                      'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
+                      branch.is_active
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    ]">
                       {{ branch.is_active ? 'Active' : 'Inactive' }}
                     </span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      @click="openModal(branch)"
-                      class="text-indigo-600 hover:text-indigo-900 mr-3"
-                    >
+                    <button @click="openModal(branch)" class="text-indigo-600 hover:text-indigo-900 mr-3">
                       Edit
                     </button>
-                    <button
-                      @click="deleteBranch(branch.id)"
-                      class="text-red-600 hover:text-red-900"
-                    >
+                    <button @click="deleteBranch(branch.id)" class="text-red-600 hover:text-red-900">
                       Delete
                     </button>
                   </td>
@@ -88,93 +77,60 @@
     </div>
 
     <!-- Branch Modal -->
-    <div
-      v-if="isModalOpen"
-      class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
-      @click="closeModal"
-    >
-      <div
-        class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
-        @click.stop
-      >
+    <div v-if="isModalOpen" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+      @click="closeModal">
+      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" @click.stop>
         <h3 class="text-lg font-bold text-gray-900 mb-4">
           {{ editingBranch ? 'Edit Branch' : 'Add Branch' }}
         </h3>
         <form @submit.prevent="saveBranch">
           <div class="mb-4">
             <label class="form-label">Name *</label>
-            <input
-              v-model="form.name"
-              type="text"
-              :class="[
-                'form-input',
-                hasFieldError('name') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
-              ]"
-            />
+            <input v-model="form.name" type="text" :class="[
+              'form-input',
+              hasFieldError('name') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+            ]" />
             <FormError :errors="getFieldErrors('name')" />
           </div>
           <div class="mb-4">
             <label class="form-label">Address *</label>
-            <textarea
-              v-model="form.address"
-              :class="[
-                'form-input',
-                hasFieldError('address') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
-              ]"
-              rows="3"
-            ></textarea>
+            <textarea v-model="form.address" :class="[
+              'form-input',
+              hasFieldError('address') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+            ]" rows="3"></textarea>
             <FormError :errors="getFieldErrors('address')" />
           </div>
           <div class="mb-4">
             <label class="form-label">Phone</label>
-            <input
-              v-model="form.phone"
-              type="text"
-              :class="[
-                'form-input',
-                hasFieldError('phone') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
-              ]"
-            />
+            <input v-model="form.phone" type="text" :class="[
+              'form-input',
+              hasFieldError('phone') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+            ]" />
             <FormError :errors="getFieldErrors('phone')" />
           </div>
           <div class="mb-4">
             <label class="form-label">Email</label>
-            <input
-              v-model="form.email"
-              type="email"
-              :class="[
-                'form-input',
-                hasFieldError('email') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
-              ]"
-            />
+            <input v-model="form.email" type="email" :class="[
+              'form-input',
+              hasFieldError('email') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+            ]" />
             <FormError :errors="getFieldErrors('email')" />
           </div>
           <div class="mb-4">
             <label class="flex items-center">
-              <input
-                v-model="form.is_active"
-                type="checkbox"
-                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              />
+              <input v-model="form.is_active" type="checkbox"
+                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
               <span class="ml-2 text-sm text-gray-600">Active</span>
             </label>
           </div>
           <div class="flex justify-end space-x-2">
-            <button
-              type="button"
-              @click="closeModal"
-              class="btn-secondary"
-            >
+            <button type="button" @click="closeModal" class="btn-secondary">
               Cancel
             </button>
-            <button
-              type="submit"
-              :disabled="isSubmitting"
-              :class="[
-                'btn-primary',
-                isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-              ]"
-            >
+            <button type="submit" :disabled="isSubmitting" :class="[
+              'btn-primary',
+              isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+            ]">
               {{ isSubmitting ? 'Saving...' : 'Save' }}
             </button>
           </div>
@@ -185,12 +141,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
 import { branchesApi } from '@/api'
-import type { Branch } from '@/types'
-import { useValidation } from '@/composables/useValidation'
+import FormError from '@/components/form/FormError.vue'
 import { useToast } from '@/composables/useToast'
-import FormError from '@/components/FormError.vue'
+import { useValidation } from '@/composables/useValidation'
+import type { Branch } from '@/types'
+import { onMounted, reactive, ref } from 'vue'
 
 const branches = ref<Branch[]>([])
 const isModalOpen = ref(false)
@@ -209,22 +165,22 @@ const form = reactive({
 })
 
 const validationRules = {
-  name: { 
-    required: true, 
-    minLength: 2, 
-    maxLength: 100 
+  name: {
+    required: true,
+    minLength: 2,
+    maxLength: 100
   },
-  address: { 
-    required: true, 
-    minLength: 10, 
-    maxLength: 500 
+  address: {
+    required: true,
+    minLength: 10,
+    maxLength: 500
   },
-  phone: { 
+  phone: {
     pattern: /^[\+]?[0-9\-\(\)\s]+$/,
     minLength: 8,
     maxLength: 20
   },
-  email: { 
+  email: {
     email: true,
     maxLength: 100
   },

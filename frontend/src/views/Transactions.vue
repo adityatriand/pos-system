@@ -9,14 +9,10 @@
         <form @submit.prevent="createTransaction">
           <div class="mb-4">
             <label class="form-label">Branch *</label>
-            <select 
-              v-model="form.branch_id" 
-              :class="[
-                'form-input',
-                hasFieldError('branch_id') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
-              ]"
-              @change="fetchEmployeesAndItems"
-            >
+            <select v-model="form.branch_id" :class="[
+              'form-input',
+              hasFieldError('branch_id') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+            ]" @change="fetchEmployeesAndItems">
               <option value="">Select Branch</option>
               <option v-for="branch in branches" :key="branch.id" :value="branch.id">
                 {{ branch.name }}
@@ -24,16 +20,13 @@
             </select>
             <FormError :errors="getFieldErrors('branch_id')" />
           </div>
-          
+
           <div class="mb-4">
             <label class="form-label">Employee *</label>
-            <select 
-              v-model="form.employee_id" 
-              :class="[
-                'form-input',
-                hasFieldError('employee_id') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
-              ]"
-            >
+            <select v-model="form.employee_id" :class="[
+              'form-input',
+              hasFieldError('employee_id') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+            ]">
               <option value="">Select Employee</option>
               <option v-for="employee in employees" :key="employee.id" :value="employee.id">
                 {{ employee.name }} - {{ employee.position }}
@@ -44,13 +37,10 @@
 
           <div class="mb-4">
             <label class="form-label">Payment Method *</label>
-            <select 
-              v-model="form.payment_method" 
-              :class="[
-                'form-input',
-                hasFieldError('payment_method') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
-              ]"
-            >
+            <select v-model="form.payment_method" :class="[
+              'form-input',
+              hasFieldError('payment_method') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+            ]">
               <option value="">Select Payment Method</option>
               <option value="cash">Cash</option>
               <option value="card">Card</option>
@@ -70,30 +60,18 @@
       <div class="card">
         <h2 class="text-lg font-medium text-gray-900 mb-4">Select Items</h2>
         <div class="mb-4">
-          <input
-            v-model="itemSearch"
-            type="text"
-            placeholder="Search items..."
-            class="form-input"
-          />
+          <input v-model="itemSearch" type="text" placeholder="Search items..." class="form-input" />
         </div>
         <div class="max-h-96 overflow-y-auto">
-          <div
-            v-for="item in filteredItems"
-            :key="item.id"
-            class="flex items-center justify-between p-3 border rounded-lg mb-2 hover:bg-gray-50"
-          >
+          <div v-for="item in filteredItems" :key="item.id"
+            class="flex items-center justify-between p-3 border rounded-lg mb-2 hover:bg-gray-50">
             <div class="flex-1">
               <div class="font-medium text-gray-900">{{ item.name }}</div>
               <div class="text-sm text-gray-500">
-                Rp {{ formatCurrency(item.price) }} - Stock: {{ item.stock_quantity }}
+                Rp {{ formatCurrency(Number(item.price)) }} - Stock: {{ item.stock_quantity }}
               </div>
             </div>
-            <button
-              @click="addItemToTransaction(item)"
-              class="btn-primary text-sm"
-              :disabled="!item.is_available"
-            >
+            <button @click="addItemToTransaction(item)" class="btn-primary text-sm" :disabled="!item.is_available">
               Add
             </button>
           </div>
@@ -124,22 +102,14 @@
                 Rp {{ formatCurrency(transactionItem.unit_price) }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <input
-                  v-model="transactionItem.quantity"
-                  type="number"
-                  min="1"
-                  class="w-20 form-input text-sm"
-                  @input="updateItemTotal(index)"
-                />
+                <input v-model="transactionItem.quantity" type="number" min="1" class="w-20 form-input text-sm"
+                  @input="updateItemTotal(index)" />
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 Rp {{ formatCurrency(transactionItem.total_price) }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <button
-                  @click="removeItem(index)"
-                  class="text-red-600 hover:text-red-900"
-                >
+                <button @click="removeItem(index)" class="text-red-600 hover:text-red-900">
                   Remove
                 </button>
               </td>
@@ -169,14 +139,10 @@
 
         <div class="flex justify-end mt-6 space-x-3">
           <button @click="resetTransaction" class="btn-secondary">Reset</button>
-          <button
-            @click="createTransaction"
-            :disabled="isSubmitting || transactionItems.length === 0"
-            :class="[
-              'btn-success',
-              (isSubmitting || transactionItems.length === 0) ? 'opacity-50 cursor-not-allowed' : ''
-            ]"
-          >
+          <button @click="createTransaction" :disabled="isSubmitting || transactionItems.length === 0" :class="[
+            'btn-success',
+            (isSubmitting || transactionItems.length === 0) ? 'opacity-50 cursor-not-allowed' : ''
+          ]">
             {{ isSubmitting ? 'Processing...' : 'Complete Transaction' }}
           </button>
         </div>
@@ -186,13 +152,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
-import { branchesApi, employeesApi, itemsApi, transactionsApi } from '@/api'
-import type { Branch, Employee, Item, CreateTransactionRequest } from '@/types'
-import { useRouter } from 'vue-router'
-import { useValidation } from '@/composables/useValidation'
+import { branchesApi, transactionsApi } from '@/api'
+import FormError from '@/components/form/FormError.vue'
 import { useToast } from '@/composables/useToast'
-import FormError from '@/components/FormError.vue'
+import { useValidation } from '@/composables/useValidation'
+import type { Branch, CreateTransactionRequest, Employee, Item } from '@/types'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
@@ -273,16 +239,15 @@ const fetchEmployeesAndItems = async () => {
     items.value = []
     return
   }
-  
+
   try {
     // Fetch employees for the selected branch
     const employeesResponse = await branchesApi.getEmployees(Number(form.branch_id))
     employees.value = employeesResponse.data.filter(employee => employee.is_active)
-    
+
     // Fetch items available at the selected branch
     const itemsResponse = await branchesApi.getItems(Number(form.branch_id))
-    const itemsData = itemsResponse.data.success ? itemsResponse.data.data : itemsResponse.data
-    items.value = itemsData.filter(item => item.is_available && item.stock_quantity > 0)
+    items.value = itemsResponse.data.filter((item: Item) => item.is_available && item.stock_quantity > 0)
   } catch (err) {
     console.error('Error fetching employees and items:', err)
     error('Error', 'Failed to load employees and items')
@@ -292,7 +257,7 @@ const fetchEmployeesAndItems = async () => {
 
 const addItemToTransaction = (item: Item) => {
   const existingIndex = transactionItems.value.findIndex(ti => ti.item_id === item.id)
-  
+
   if (existingIndex >= 0) {
     transactionItems.value[existingIndex].quantity++
     updateItemTotal(existingIndex)

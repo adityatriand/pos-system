@@ -124,7 +124,7 @@ const editingItem = ref<Item | null>(null)
 const form = reactive({
   name: '',
   description: '',
-  category: '',
+  category: '' as 'food' | 'beverage' | '',
   price: '',
   stock_quantity: '',
   unit: '',
@@ -165,7 +165,7 @@ const openModal = (item?: Item) => {
     Object.assign(form, {
       name: '',
       description: '',
-      category: '',
+      category: '' as 'food' | 'beverage' | '',
       price: '',
       stock_quantity: '',
       unit: '',
@@ -182,10 +182,17 @@ const closeModal = () => {
 
 const saveItem = async () => {
   try {
+    const formData = {
+      ...form,
+      category: form.category as 'food' | 'beverage',
+      price: Number(form.price),
+      stock_quantity: Number(form.stock_quantity)
+    }
+    
     if (editingItem.value) {
-      await itemsApi.update(editingItem.value.id, form)
+      await itemsApi.update(editingItem.value.id, formData)
     } else {
-      await itemsApi.create(form)
+      await itemsApi.create(formData)
     }
     closeModal()
     fetchItems()

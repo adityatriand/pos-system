@@ -81,8 +81,8 @@
           </div>
           <div class="mb-4">
             <label class="form-label">Branch</label>
-            <select v-model="form.branch_id" class="form-input" required>
-              <option value="">Select Branch</option>
+            <select v-model.number="form.branch_id" class="form-input" required>
+              <option value="0">Select Branch</option>
               <option v-for="branch in branches" :key="branch.id" :value="branch.id">
                 {{ branch.name }}
               </option>
@@ -127,7 +127,7 @@ const form = reactive({
   email: '',
   phone: '',
   position: '',
-  branch_id: '',
+  branch_id: 0,
   salary: '',
   hire_date: '',
   is_active: true,
@@ -171,7 +171,7 @@ const openModal = (employee?: Employee) => {
       email: '',
       phone: '',
       position: '',
-      branch_id: '',
+      branch_id: 0,
       salary: '',
       hire_date: '',
       is_active: true,
