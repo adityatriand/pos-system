@@ -12,11 +12,7 @@
     <!-- Branch Selection -->
     <div class="mt-8 mb-6">
       <label class="form-label">Select Branch</label>
-      <select 
-        v-model="selectedBranchId" 
-        @change="fetchBranchInventory"
-        class="form-input max-w-xs"
-      >
+      <select v-model="selectedBranchId" @change="fetchBranchInventory" class="form-input max-w-xs">
         <option value="">Select Branch</option>
         <option v-for="branch in branches" :key="branch.id" :value="branch.id">
           {{ branch.name }}
@@ -59,27 +55,23 @@
                 {{ item.name }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <span
-                  :class="[
-                    'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                    item.category === 'food' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-blue-100 text-blue-800'
-                  ]"
-                >
+                <span :class="[
+                  'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
+                  item.category === 'food'
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-blue-100 text-blue-800'
+                ]">
                   {{ item.category === 'food' ? 'Food' : 'Beverage' }}
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                Rp {{ formatCurrency(item.price) }}
+                Rp {{ formatCurrency(Number(item.price)) }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                <span 
-                  :class="[
-                    'font-medium',
-                    item.is_low_stock ? 'text-red-600' : 'text-gray-900'
-                  ]"
-                >
+                <span :class="[
+                  'font-medium',
+                  item.is_low_stock ? 'text-red-600' : 'text-gray-900'
+                ]">
                   {{ item.stock_quantity }} {{ item.unit }}
                 </span>
               </td>
@@ -87,30 +79,25 @@
                 {{ item.min_stock_level }} {{ item.unit }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <span
-                  :class="[
-                    'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                    item.is_available && item.stock_quantity > 0
-                      ? 'bg-green-100 text-green-800'
-                      : item.is_low_stock
+                <span :class="[
+                  'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
+                  item.is_available && item.stock_quantity > 0
+                    ? 'bg-green-100 text-green-800'
+                    : item.is_low_stock
                       ? 'bg-yellow-100 text-yellow-800'
                       : 'bg-red-100 text-red-800'
-                  ]"
-                >
-                  {{ 
-                    item.is_available && item.stock_quantity > 0 
-                      ? 'Available' 
-                      : item.is_low_stock 
-                      ? 'Low Stock' 
-                      : 'Out of Stock' 
+                ]">
+                  {{
+                    item.is_available && item.stock_quantity > 0
+                      ? 'Available'
+                      : item.is_low_stock
+                        ? 'Low Stock'
+                        : 'Out of Stock'
                   }}
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button
-                  @click="openStockModal(item)"
-                  class="text-indigo-600 hover:text-indigo-900"
-                >
+                <button @click="openStockModal(item)" class="text-indigo-600 hover:text-indigo-900">
                   Update Stock
                 </button>
               </td>
@@ -129,71 +116,44 @@
     </div>
 
     <!-- Stock Update Modal -->
-    <div
-      v-if="isStockModalOpen"
-      class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
-      @click="closeStockModal"
-    >
-      <div
-        class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
-        @click.stop
-      >
+    <div v-if="isStockModalOpen" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+      @click="closeStockModal">
+      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" @click.stop>
         <h3 class="text-lg font-bold text-gray-900 mb-4">
           Update Stock: {{ editingItem?.name }}
         </h3>
         <form @submit.prevent="updateStock">
           <div class="mb-4">
             <label class="form-label">Stock Quantity *</label>
-            <input
-              v-model="stockForm.stock_quantity"
-              type="number"
-              min="0"
-              :class="[
-                'form-input',
-                hasFieldError('stock_quantity') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
-              ]"
-            />
+            <input v-model="stockForm.stock_quantity" type="number" min="0" :class="[
+              'form-input',
+              hasFieldError('stock_quantity') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+            ]" />
             <FormError :errors="getFieldErrors('stock_quantity')" />
           </div>
           <div class="mb-4">
             <label class="form-label">Minimum Stock Level</label>
-            <input
-              v-model="stockForm.min_stock_level"
-              type="number"
-              min="0"
-              :class="[
-                'form-input',
-                hasFieldError('min_stock_level') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
-              ]"
-            />
+            <input v-model="stockForm.min_stock_level" type="number" min="0" :class="[
+              'form-input',
+              hasFieldError('min_stock_level') ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+            ]" />
             <FormError :errors="getFieldErrors('min_stock_level')" />
           </div>
           <div class="mb-4">
             <label class="flex items-center">
-              <input
-                v-model="stockForm.is_available"
-                type="checkbox"
-                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              />
+              <input v-model="stockForm.is_available" type="checkbox"
+                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
               <span class="ml-2 text-sm text-gray-600">Available for sale</span>
             </label>
           </div>
           <div class="flex justify-end space-x-2">
-            <button
-              type="button"
-              @click="closeStockModal"
-              class="btn-secondary"
-            >
+            <button type="button" @click="closeStockModal" class="btn-secondary">
               Cancel
             </button>
-            <button
-              type="submit"
-              :disabled="isSubmitting"
-              :class="[
-                'btn-primary',
-                isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-              ]"
-            >
+            <button type="submit" :disabled="isSubmitting" :class="[
+              'btn-primary',
+              isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+            ]">
               {{ isSubmitting ? 'Updating...' : 'Update Stock' }}
             </button>
           </div>
@@ -204,12 +164,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
 import { branchesApi } from '@/api'
-import type { Branch, Item } from '@/types'
-import { useValidation } from '@/composables/useValidation'
+import FormError from '@/components/form/FormError.vue'
 import { useToast } from '@/composables/useToast'
-import FormError from '@/components/FormError.vue'
+import { useValidation } from '@/composables/useValidation'
+import type { Branch, Item } from '@/types'
+import { onMounted, reactive, ref } from 'vue'
 
 const branches = ref<Branch[]>([])
 const branchItems = ref<Item[]>([])
@@ -228,12 +188,12 @@ const stockForm = reactive({
 })
 
 const validationRules = {
-  stock_quantity: { 
-    required: true, 
-    min: 0 
+  stock_quantity: {
+    required: true,
+    min: 0
   },
-  min_stock_level: { 
-    min: 0 
+  min_stock_level: {
+    min: 0
   },
 }
 
@@ -262,10 +222,8 @@ const fetchBranchInventory = async () => {
 
   try {
     const response = await branchesApi.getItems(Number(selectedBranchId.value))
-    
-    if (response.data && response.data.success && Array.isArray(response.data.data)) {
-      branchItems.value = response.data.data
-    } else if (response.data && Array.isArray(response.data)) {
+
+    if (Array.isArray(response.data)) {
       branchItems.value = response.data
     } else {
       error('Error', 'Unexpected response format from server')
@@ -315,7 +273,7 @@ const updateStock = async () => {
         is_low_stock: stockForm.stock_quantity <= stockForm.min_stock_level,
       }
     }
-    
+
     success('Success', 'Stock updated successfully')
     closeStockModal()
   } catch (err) {
